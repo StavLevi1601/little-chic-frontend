@@ -2,19 +2,38 @@
 
 import { useState } from "react";
 import "./App.css";
-import { login } from "./assets/functions/login";
+import { registerFunction } from "./assets/functions/register";
+import { signInFunction } from "./assets/functions/signIn";
 
 function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [signIn, setSignIn] = useState(false);
+  const [register, setRegister] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await login(username, password);
+    console.log("sign in", signIn);
+    console.log("register", register);
+    if (signIn) {
+      await signInFunction(username, password);
+      setSignIn(false);
+    }
+    if (register) {
+      await registerFunction(username, password);
+      setRegister(false);
+    }
     setUsername("");
     setPassword("");
   };
 
+  const handleSignIn = () => {
+    setSignIn(true);
+  };
+
+  const handleRegister = () => {
+    setRegister(true);
+  };
   return (
     <>
       <div
@@ -44,7 +63,12 @@ function App() {
               onChange={(e) => setPassword(e.target.value)}
             ></input>
           </div>
-          <button>Login</button>
+          <button onClick={handleSignIn} value={signIn}>
+            Sign in
+          </button>
+          <button onClick={handleRegister} value={signIn}>
+            Register
+          </button>
         </form>
       </div>
     </>
