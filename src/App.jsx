@@ -1,77 +1,31 @@
-/* eslint-disable no-undef */
-
-import { useState } from "react";
-import "./App.css";
-import { registerFunction } from "./assets/functions/register";
-import { signInFunction } from "./assets/functions/signIn";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./components/Home";
+import { AuthContext, AuthProvider } from "./Contexts/AuthContext";
+import { useContext } from "react";
+import Login from "./components/FirstPage";
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [signIn, setSignIn] = useState(false);
-  const [register, setRegister] = useState(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log("sign in", signIn);
-    console.log("register", register);
-    if (signIn) {
-      await signInFunction(username, password);
-      setSignIn(false);
-    }
-    if (register) {
-      await registerFunction(username, password);
-      setRegister(false);
-    }
-    setUsername("");
-    setPassword("");
-  };
-
-  const handleSignIn = () => {
-    setSignIn(true);
-  };
-
-  const handleRegister = () => {
-    setRegister(true);
-  };
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "500px",
-          margin: "0 auto",
-        }}
-      >
-        <form onSubmit={handleSubmit}>
-          <div style={{ flexDirection: "row" }}>
-            <label htmlFor="username">Username:</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            ></input>
-          </div>
-          <div style={{ flexDirection: "row" }}>
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            ></input>
-          </div>
-          <button onClick={handleSignIn} value={signIn}>
-            Sign in
-          </button>
-          <button onClick={handleRegister} value={signIn}>
-            Register
-          </button>
-        </form>
-      </div>
-    </>
+    <AuthProvider>
+      <AppContext />
+    </AuthProvider>
+  );
+}
+
+function AppContext() {
+  const { user } = useContext(AuthContext);
+  console.log("user: ", user);
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={user ? <Home /> : <Navigate replace to="/" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
